@@ -14,10 +14,6 @@ CONSUMER_KEY = os.environ.get('TWITTER_CONSUMER_KEY')
 CONSUMER_SECRET = os.environ.get('TWITTER_CONSUMER_SECRET')
 
 
-def printj(data):
-    print(json.dumps(data, indent=4, sort_keys=True))
-
-
 # Setup access to API
 def connect_to_twitter_OAuth():
     auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
@@ -26,6 +22,7 @@ def connect_to_twitter_OAuth():
 
 
 def extract_tweet_attributes(api, target_name):
+
     # create empty list
     tweet_list = []
 
@@ -38,7 +35,6 @@ def extract_tweet_attributes(api, target_name):
         created_at = tweet.created_at  # utc time tweet created
         source = tweet.source  # utility used to post tweet
         reply_to_status = tweet.in_reply_to_status_id  # if reply int of orginal tweet id
-        location = tweet.geo
         reply_to_user = tweet.in_reply_to_screen_name
 
         # append attributes to list
@@ -49,8 +45,7 @@ def extract_tweet_attributes(api, target_name):
                            'created_at': created_at,
                            'source': source,
                            'reply_to_status': reply_to_status,
-                           'reply_to_user': reply_to_user,
-                           'location': location})
+                           'reply_to_user': reply_to_user})
 
     # create dataframe
     df = pd.DataFrame(tweet_list, columns=['tweet_id',
@@ -60,8 +55,7 @@ def extract_tweet_attributes(api, target_name):
                                            'created_at',
                                            'source',
                                            'reply_to_status',
-                                           'reply_to_user',
-                                           'location'])
+                                           'reply_to_user'])
 
     return df
 
@@ -71,7 +65,7 @@ def main():
     pd.options.display.width = None
 
     api = connect_to_twitter_OAuth()  # Create API object
-    df = extract_tweet_attributes(api, '@taylorswift13')
+    df = extract_tweet_attributes(api, 'taylorswift13')
     df.to_csv(r'./taylor_swift_tweets.csv')
 
 
